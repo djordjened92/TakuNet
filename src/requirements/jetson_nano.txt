@@ -1,0 +1,8 @@
+ipython
+numpy
+opencv-python==4.9.0.80
+opencv-python-headless==4.10.0.84
+pillow
+python-dateutil==2.9.0.post0
+PyYAML
+tqdm

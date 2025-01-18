@@ -1,0 +1,12 @@
+onnx_model_path: "exports/TakuNet_fp16_opset17.onnx"
+tensorrt_engine_path: "exports/TakuNet_fp16_opset17.engine"
+use_tensorrt: true
+fp16_mode: true
+dataset_size: 2600
+img_size:
+  - 3
+  - 240
+  - 240
+num_classes: 5
+batch_size: 1
+old_jetpack: false
