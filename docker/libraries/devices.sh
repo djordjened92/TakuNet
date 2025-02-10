@@ -10,6 +10,8 @@ detect_hostdevice_type(){
             device="JETSON_NANO"
         elif grep -qi "Jetson Orin" /proc/device-tree/model; then
             device="JETSON_ORIN_NANO"
+        elif grep -qi "Jetson-TX1" /proc/device-tree/model; then
+            device="JETSON_NANO"
         else
             device="DESKTOP_COMPUTER"
         fi

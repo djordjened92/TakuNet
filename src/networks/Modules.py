@@ -4,6 +4,10 @@ from torch import nn
 class Stem(nn.Module):
     def __init__(self, resolution:int, in_channels: int, out_channels: int, reduction:int=1) -> None:
         super(Stem, self).__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.reduction = reduction
+        self.resolution = resolution
 
         self.stride1 = 2 if reduction % 2 == 0 else 1
         self.stride2 = 2 if reduction % 4 == 0 else 1
@@ -17,16 +21,24 @@ class Stem(nn.Module):
             nn.ReLU6(),
         )
 
+    def get_output_resolution(self) -> int:
+        return (((self.resolution - 1) // self.stride1) + 1) // self.stride2 + 1
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.stem(x)
         return x
 
 
 class TakuBlock(nn.Module):
-    def __init__(self, in_channels: int, out_channels: int, kernel_size: int, stride: int, padding: int, dilation: int) -> None:
+    def __init__(self, resolution: int, in_channels: int, out_channels: int, kernel_size: int, stride: int, padding: int, dilation: int) -> None:
         super(TakuBlock, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.kernel_size = kernel_size
+        self.stride = stride
+        self.padding = padding
+        self.dilation = dilation
+        self.resolution = resolution
 
         self.skip_conn = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride) if in_channels != out_channels else nn.Identity()
 

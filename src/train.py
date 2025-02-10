@@ -16,12 +16,12 @@ from utils.net_utils import extract_net_params, extract_optim_params
 from fvcore.nn import FlopCountAnalysis
 
 from utils.net_utils import select_arch
-from utils.augment import create_augmentations
-from utils.dataloader import get_dataset, get_dataloader
+from augmentation.augmentator import select_augmentation
+from datasets.dataloader import get_dataset, get_dataloader
 
 def train(args: argparse.Namespace) -> None:
     device = torch.device(f"cuda:{str(get_rank())}" if torch.cuda.is_available() else "cpu")
-    transforms = create_augmentations(args.img_height, args.img_width, p=0.1)
+    transforms = select_augmentation(args.augment, (args.img_height, args.img_width), p=0.1)
     target_size=(args.img_height, args.img_width)
 
     trainset = get_dataset(dataset=args.dataset, 
@@ -49,7 +49,7 @@ def train(args: argparse.Namespace) -> None:
     if args.num_classes != trainset.num_classes:
         raise ValueError(f"Number of classes in config file ({args.num_classes}) does not match the number of classes in the dataset ({trainset.num_classes})")
     
-    train_loader = get_dataloader(trainset, target_size, args.batch_size, True, 'train',transforms, args.num_workers, args.persistent_workers, args.pin_memory, device)
+    train_loader = get_dataloader(trainset, target_size, args.batch_size, True, 'train', transforms, args.num_workers, args.persistent_workers, args.pin_memory, device)
     val_loader = get_dataloader(valset, target_size, args.batch_size, False, 'val', transforms, args.num_workers, args.persistent_workers, args.pin_memory, device)
 
     net_kwargs = extract_net_params(args)

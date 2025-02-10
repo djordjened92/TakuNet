@@ -5,11 +5,15 @@ import logging
 from networks.LayerNorms import GRN
 
 class DownSampler(nn.Module):
-    def __init__(self, in_channels: int, hidden_channels: int, out_channels: int, kernel_size: int, stride: int, pooling:nn.Module=None, dense: bool=False) -> None:
+    def __init__(self, resolution: int, in_channels: int, hidden_channels: int, out_channels: int, kernel_size: int, stride: int, pooling:nn.Module=None, dense: bool=False) -> None:
         super(DownSampler, self).__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.out_channels = out_channels
+        self.resolution = resolution
+        self.pooling = pooling
+        self.kernel_size = kernel_size
+        self.stride = stride
 
         self.dense = dense
         self.dense_channels = in_channels + hidden_channels
@@ -37,6 +41,13 @@ class DownSampler(nn.Module):
         self.grn = GRN(self.out_channels)
 
         logging.info(f"Setting DownSampler {hidden_channels} -> {out_channels} with downsampler type {type(self.downsampler)} and dense_fc {type(self.dense_fc)}")
+
+    def get_output_resolution(self) -> int:
+        if self.pooling == nn.MaxPool2d or self.pooling == nn.AvgPool2d:
+            output_resolution = (self.resolution - self.kernel_size) // self.stride + 1
+        else:
+            raise NotImplementedError(f"Pooling layer {self.pooling} not implemented")
+        return output_resolution
 
     def forward(self, x: torch.Tensor, dense_x: torch.Tensor=None) -> torch.Tensor:
         if self.dense and dense_x is not None:

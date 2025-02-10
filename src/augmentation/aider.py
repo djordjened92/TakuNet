@@ -1,5 +1,6 @@
 import albumentations
 from albumentations.core.transforms_interface import ImageOnlyTransform
+import torch
 import numpy as np
 import cv2
 
@@ -39,18 +40,14 @@ def add_random_shadow(image):
 
 
 class AddShadow(ImageOnlyTransform):
-    def __init__(
-        self, always_apply=False, p=1.0
-    ):
+    def __init__(self, always_apply=False, p=1.0):
         super(AddShadow, self).__init__(always_apply, p)
 
-
-    def apply(self, img,**params):
+    def apply(self, img, **params):
         return add_random_shadow(img)
+    
 
-
-
-def create_augmentations(img_height=224, img_width=224, p=0.1):
+def create_aider_augmentations(img_height=224, img_width=224, p=0.1):
     augmentations = albumentations.Compose([
         albumentations.Resize(img_height, img_width, p=1.),
         albumentations.HorizontalFlip(p=0.5),

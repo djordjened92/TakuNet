@@ -15,7 +15,6 @@ class TakuNet(LightningNet):
                 net_kwargs: dict,
                 criterion: nn.Module,
                 optim_kwargs:dict,
-                resolution: int = 32,
                 ):
         super(TakuNet, self).__init__(net_kwargs, criterion, optim_kwargs)
         logging.info(f"Building TakuNet with {net_kwargs}")
@@ -28,12 +27,14 @@ class TakuNet(LightningNet):
         self.poolings = net_kwargs["poolings"]
         self.dense = net_kwargs["dense"]
         self.net_modules = net_kwargs["modules"]
+        self.reduction = net_kwargs["stem_reduction"]
+        self.resolution = net_kwargs["resolution"]
         
         assert len(self.depths) == len(self.widths) == len(self.heads), "depths, heads and widths must have the same length"
 
         self.stages = nn.ModuleList()
-        self.stages.append(Stem(resolution, self.input_channels, self.widths[0], reduction=4))
-
+        self.stages.append(Stem(self.resolution, self.input_channels, self.widths[0], reduction=self.reduction))
+        curr_resolution = self.stages[0].get_output_resolution()
         prev_channel_dim = self.widths[0]
         for i in range(len(self.depths)):
             depth = self.depths[i] if i < len(self.depths) - 1 else self.depths[i] - 1
@@ -42,8 +43,8 @@ class TakuNet(LightningNet):
             
             prev_channel_dim = self.widths[i]
             downsample = True
-            self.stages.append(Stage(self.net_modules[i], prev_channel_dim, hidden_channels, out_channels, depth, self.poolings[i], dense=self.dense, downsample=downsample))
-            resolution //= 2
+            self.stages.append(Stage(self.net_modules[i], curr_resolution, prev_channel_dim, hidden_channels, out_channels, depth, self.poolings[i], dense=self.dense, downsample=downsample))
+            curr_resolution = self.stages[i + 1].downsampler.get_output_resolution()
 
         self.backbone = nn.Sequential(*self.stages)
 
@@ -65,12 +66,12 @@ class TakuNet(LightningNet):
         x = self.backbone(x)
         x = self.refiner(x)
         x = self.classifier(x)
-
+        
         return x
     
     
 class Stage(nn.Module):
-    def __init__(self, module: nn.Module, in_channels: int, hidden_channels: int, out_channels: int, depth: int, pooling: nn.Module=None, dense: bool=False, downsample: bool=True) -> None:
+    def __init__(self, module: nn.Module, resolution: int, in_channels: int, hidden_channels: int, out_channels: int, depth: int, pooling: nn.Module=None, dense: bool=False, downsample: bool=True) -> None:
         super(Stage, self).__init__()
         self.layers = nn.ModuleList()
         self.downsample = downsample
@@ -79,10 +80,10 @@ class Stage(nn.Module):
             cur_in_channels = in_channels if i == 0 else hidden_channels
             padding = 1
             dilation = 1
-            self.layers.append(module(cur_in_channels, hidden_channels, kernel_size=3, stride=1, padding=padding, dilation=dilation))
+            self.layers.append(module(resolution, cur_in_channels, hidden_channels, kernel_size=3, stride=1, padding=padding, dilation=dilation))
 
         self.stage = nn.Sequential(*self.layers)
-        self.downsampler = DownSampler(in_channels, hidden_channels, out_channels, kernel_size=2, stride=2, pooling=pooling, dense=dense) if downsample else nn.Identity()
+        self.downsampler = DownSampler(resolution, in_channels, hidden_channels, out_channels, kernel_size=2, stride=2, pooling=pooling, dense=dense) if downsample else nn.Identity()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         out = self.stage(x)

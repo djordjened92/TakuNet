@@ -21,7 +21,7 @@ data_path: /home/user/Data/AIDER
 num_classes: 5
 img_height: 240
 img_width: 240
-augment: True
+augment: AIDER
 k_folds: 0
 split: proportional
 no_validation: True
@@ -33,6 +33,7 @@ lightning_precision: 16-mixed #32-true
 network: TakuNet
 input_channels: 3
 dense: True
+stem_reduction: 4
 ckpts_path: ckpts/TakuNet_AIDER.ckpt
 
 # Optimization parameters

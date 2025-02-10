@@ -15,8 +15,7 @@ from utils.net_utils import extract_net_params, extract_optim_params
 from fvcore.nn import FlopCountAnalysis
 
 from utils.net_utils import select_arch
-
-from utils.dataloader import get_dataloader, get_dataset
+from datasets.dataloader import get_dataset, get_dataloader
 
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
@@ -118,3 +117,4 @@ def test(trainer, model, args: argparse.Namespace) -> None:
                  test_loader, 
                  ckpt_path=ckpts_file if load_ckps else None
                  )
+    

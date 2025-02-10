@@ -10,8 +10,10 @@ def extract_net_params(args: argparse.Namespace):
         'input_channels': args.input_channels,
         'output_classes': args.num_classes,
         'dense': args.dense,
+        'stem_reduction': args.stem_reduction,
         'k_folds': args.k_folds,
         'split': args.split,
+        'resolution': args.img_width,
     }
 
 def extract_optim_params(args: argparse.Namespace):
