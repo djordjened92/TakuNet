@@ -235,8 +235,6 @@ For optimal performance with TakuNet, we recommend performing a fresh OS install
 
 If you find this code useful for your research, please consider citing:
 
-__WARNING!__ The paper has been accepted at WACVW 2025, but the official proceeding paper is not available yet! The following is an example of how the bibtex citation would look like. Do not use it, wait for the official one, the conference will start the 28th february 2025.
-
 ```bibtex
 @InProceedings{Rossi_2025_WACV,
     author    = {Rossi, Daniel and Borghi, Guido and Vezzani, Roberto},
