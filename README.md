@@ -7,7 +7,7 @@
 
 University of Modena and Reggio Emilia, Italy
 
-### [Paper](https://arxiv.org/abs/2501.05880)
+### [ArXiv](https://arxiv.org/abs/2501.05880) · [CVF](https://openaccess.thecvf.com/content/WACV2025W/V3SC/papers/Rossi_TakuNet_an_Energy-Efficient_CNN_for_Real-Time_Inference_on_Embedded_UAV_WACVW_2025_paper.pdf)
 
 <div align="center">
 
@@ -241,10 +241,10 @@ __WARNING!__ The paper has been accepted at WACVW 2025, but the official proceed
 @InProceedings{Rossi_2025_WACV,
     author    = {Rossi, Daniel and Borghi, Guido and Vezzani, Roberto},
     title     = {TakuNet: an Energy-Efficient CNN for Real-Time Inference on Embedded UAV systems in Emergency Response Scenarios},
-    booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) Workshops},
-    month     = {January},
+    booktitle = {Proceedings of the Winter Conference on Applications of Computer Vision (WACV) Workshops},
+    month     = {February},
     year      = {2025},
-    pages     = {}
+    pages     = {376-385}
 }
 ```
 
