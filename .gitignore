@@ -173,3 +173,6 @@ cython_debug/
 exports
 runs
 .vscode
+*.png
+*.jpg
+*.zip
