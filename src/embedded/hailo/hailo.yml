@@ -1,0 +1,7 @@
+
+onnx_model_path: "/local/shared_with_docker/models/TakuNet_fp16_opset15.onnx"
+
+dataset_size: 2600
+data_path: "/local/shared_with_docker/datasets/AIDER"
+hailo_version: "hailo8"
+target_size: [240, 240]
